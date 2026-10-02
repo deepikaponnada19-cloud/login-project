@@ -11,3 +11,4 @@ const response = await fetch(
     })
   }
 );
+export default App;
