@@ -5,7 +5,7 @@ function App() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
 
     if (!email || !password) {
@@ -13,19 +13,41 @@ function App() {
       return;
     }
 
-    alert("Login button clicked!");
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            email,
+            password
+          })
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert(data.message);
+      } else {
+        alert("Login failed");
+      }
+    } catch (error) {
+      alert("Unable to connect to server");
+      console.error(error);
+    }
   };
 
   return (
     <div className="login-container">
       <div className="login-box">
-
         <h1>Welcome Back</h1>
-
         <p>Login to your account</p>
 
         <form onSubmit={handleLogin}>
-
           <label>Email</label>
 
           <input
@@ -44,16 +66,12 @@ function App() {
             onChange={(e) => setPassword(e.target.value)}
           />
 
-          <button type="submit">
-            Login
-          </button>
-
+          <button type="submit">Login</button>
         </form>
 
         <div className="signup">
           Don't have an account? <a href="#">Sign Up</a>
         </div>
-
       </div>
     </div>
   );
